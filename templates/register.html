@@ -14,20 +14,22 @@
         <div class="col-md-6 col-lg-offset-3">
             <form>
                 {% csrf_token %}
-
                 {% for field in form %}
                     <div class="form-group">
-                        <label for="user">{{ field.label }}</label>
+                        <label for="{{ field.auto_id }}">{{ field.label }}</label>
                         {{ field }}
                     </div>
                 {% endfor %}
                 <div class="form-group">
-                    <label for="avatar">头像</label>
-                    <input type="file">
+                    <label for="avatar">
+                        头像
+                        <img width="60" height="60" id="avatar_img" src="/static/blog/img/default.png" alt="">
+                    </label>
+                    <input type="file" id="avatar" style="display: none">
+
                 </div>
 
-
-                <input class="btn btn-default login_btn" type="button" value="submit"><span class="error"></span>
+                <input class="btn btn-default reg_btn" type="button" value="submit"><span class="error"></span>
 
             </form>
         </div>
@@ -36,34 +38,41 @@
 
 
 <script src="/static/js/jquery-3.2.1.min.js"></script>
+
 <script>
-    //局部刷新验证码
-    $("#valid_code_img").click(function () {
-        $(this)[0].src += "?";
+    $("#avatar").change(function(){
+        var file_obj=$(this)[0].files[0];
+        var reader = new FileReader();
+        reader.readAsDataURL(file_obj);
+        reader.onload=function(){
+            $("#avatar_img").attr("src",reader.result);
+        };
+
     });
 
-    //登录验证
-    $(".login_btn").click(function () {
+    //基于Ajax提交数据
+    $(".reg_btn").click(function () {
+        var formdata=new FormData();
+        formdata.append("user",$("#id_user").val());
+        formdata.append("pwd",$("#id_pwd").val());
+        formdata.append("re_pwd",$("#id_re_pwd").val());
+        formdata.append("email",$("#id_email").val());
+        formdata.append("avatar",$("#avatar")[0].files[0]);
+        formdata.append("csrfmiddlewaretoken",$("[name='csrfmiddlewaretoken']").val());
 
         $.ajax({
-            url: "",
-            type: "post",
-            data: {
-                user: $("#user").val(),
-                pwd: $("#pwd").val(),
-                valid_code: $("#valid_code").val(),
-                csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
-            },
-            success: function (data) {
-                if (data.user) {
-                    location.href = "/index/";
-                } else {
-                    $(".error").text(data.msg).css({"color": "red"});
-                }
+            url:"",
+            type:"post",
+            contentType:false,
+            processData:false,
+            data:formdata,
+            success:function (data) {
+                console.log(data);
             }
         })
-    })
+    });
 
 </script>
+
 </body>
 </html>

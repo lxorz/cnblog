@@ -87,6 +87,13 @@ class UserForm(forms.Form):
 
 
 def register(request):
-
+    if request.is_ajax():
+        form = UserForm(request.POST)
+        response={"user":None,"msg":None}
+        if form.is_valid():
+            response["user"]=form.cleaned_data.get("user")
+        else:
+            response["msg"]=form.errors
+        return JsonResponse(response)
     form=UserForm()
     return render(request,"register.html",{"form":form})
