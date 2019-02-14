@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" href="/static/blog/bs/css/bootstrap.css">
+    <style>
+        .error{
+            color: red;
+        }
+    </style>
 </head>
 <body>
 
@@ -12,12 +17,12 @@
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-lg-offset-3">
-            <form>
+            <form class="form">
                 {% csrf_token %}
                 {% for field in form %}
                     <div class="form-group">
                         <label for="{{ field.auto_id }}">{{ field.label }}</label>
-                        {{ field }}
+                        {{ field }} <span class="error pull-right"></span>
                     </div>
                 {% endfor %}
                 <div class="form-group">
@@ -67,7 +72,22 @@
             processData:false,
             data:formdata,
             success:function (data) {
-                console.log(data);
+                if(data.user){
+
+                }
+                else{
+                    $("span.error").html("");
+                    $(".form-group").removeClass("has-error");
+                    $.each(data.msg,function (field,error_list) {
+
+                        if(field=="__all__"){
+                            $("#id_re_pwd").next().html(error_list[0]).parent().addClass("has-error");
+                        }
+
+                        $("#id_"+field).next().html(error_list[0]);
+                        $("#id_"+field).parent().addClass("has-error");
+                    })
+                }
             }
         })
     });
