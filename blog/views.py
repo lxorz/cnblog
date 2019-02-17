@@ -7,7 +7,7 @@ from io import BytesIO
 from django.contrib import auth
 from blog.Myforms import UserForm
 # Create your views here.
-
+from blog.models import UserInfo
 def login(request):
     
     if request.method=="POST":
@@ -82,6 +82,18 @@ def register(request):
         response={"user":None,"msg":None}
         if form.is_valid():
             response["user"]=form.cleaned_data.get("user")
+
+            user=form.cleaned_data.get("user")
+            pwd=form.cleaned_data.get("pwd")
+            email=form.cleaned_data.get("email")
+            avatar_obj=request.FILES.get("avatar")
+
+            extra={}
+            if avatar_obj:
+                extra["avatar"]=avatar_obj
+
+            UserInfo.objects.create_user(username=user,password=pwd,**extra)
+
         else:
             response["msg"]=form.errors
         return JsonResponse(response)
