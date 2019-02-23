@@ -8,6 +8,9 @@ from django.contrib import auth
 from blog.Myforms import UserForm
 # Create your views here.
 from blog.models import UserInfo
+from blog import models
+
+
 def login(request):
     
     if request.method=="POST":
@@ -70,11 +73,15 @@ def get_validCode_img(request):
 
 
 def index(request):
-    return render(request,"index.html")
+    article_list = models.Article.objects.all()
+
+    return render(request,"index.html",{"article_list":article_list})
 
 
 
-
+def logout(request):
+    auth.logout(request)
+    return redirect("/login/")
 
 def register(request):
     if request.is_ajax():

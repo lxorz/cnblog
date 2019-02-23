@@ -22,7 +22,9 @@ from cnblog import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', views.login),
+    path('logout/', views.logout),
     path('index/', views.index),
+    re_path(r'^$', views.index),
     path('register/', views.register),
     path('get_validCode_img/', views.get_validCode_img),
     re_path(r"media/(?P<path>.*)", serve,{"dpcument_root":settings.MEDIA_ROOT}),
